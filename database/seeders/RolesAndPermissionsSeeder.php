@@ -97,5 +97,7 @@ class RolesAndPermissionsSeeder extends Seeder
         if (! $admin->hasRole('customer')) {
             $admin->assignRole('customer');
         }
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
     }
 }

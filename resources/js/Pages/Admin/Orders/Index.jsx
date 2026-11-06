@@ -29,12 +29,12 @@ export default function OrdersIndex({ orders, filters, games }) {
     };
 
     return (
-        <AdminLayout title={t('nav.orders') || 'Orders'}>
+        <AdminLayout title={t('admin.orders_title')}>
             <div className="space-y-6">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <h2 className="text-xl font-semibold text-white">{t('nav.orders') || 'Orders'}</h2>
-                        <p className="mt-1 text-sm text-slate-400">{t('admin.orders_hint') || 'Search and filter customer orders.'}</p>
+                        <h2 className="text-xl font-semibold text-white">{t('admin.orders_title')}</h2>
+                        <p className="mt-1 text-sm text-slate-400">{t('admin.orders_hint')}</p>
                     </div>
                 </div>
 
@@ -43,33 +43,33 @@ export default function OrdersIndex({ orders, filters, games }) {
                     className="grid gap-4 rounded-xl border border-white/10 bg-navy-900/40 p-4 sm:grid-cols-2 lg:grid-cols-5"
                 >
                     <div className="lg:col-span-2">
-                        <InputLabel htmlFor="search" value={t('common.search') || 'Search'} />
+                        <InputLabel htmlFor="search" value={t('common.search')} />
                         <TextInput
                             id="search"
                             className="mt-1 block w-full"
                             value={data.search}
                             onChange={(e) => setData('search', e.target.value)}
-                            placeholder={t('admin.order_search_ph') || 'Order #, UID, TRX…'}
+                            placeholder={t('admin.order_search_ph')}
                         />
                     </div>
                     <div>
-                        <InputLabel htmlFor="status" value={t('common.status') || 'Status'} />
+                        <InputLabel htmlFor="status" value={t('common.status')} />
                         <select
                             id="status"
                             className="mt-1 block w-full rounded-lg border-white/10 bg-navy-950 px-3 py-2 text-sm text-slate-100"
                             value={data.status}
                             onChange={(e) => setData('status', e.target.value)}
                         >
-                            <option value="">{t('common.all') || 'All'}</option>
+                            <option value="">{t('common.all')}</option>
                             {orderStatuses.map((status) => (
                                 <option key={status} value={status}>
-                                    {status}
+                                    {t(`status.${status}`)}
                                 </option>
                             ))}
                         </select>
                     </div>
                     <div>
-                        <InputLabel htmlFor="payment_method" value={t('game.payment_method') || 'Payment method'} />
+                        <InputLabel htmlFor="payment_method" value={t('game.payment_method')} />
                         <TextInput
                             id="payment_method"
                             className="mt-1 block w-full"
@@ -79,14 +79,14 @@ export default function OrdersIndex({ orders, filters, games }) {
                         />
                     </div>
                     <div>
-                        <InputLabel htmlFor="game_id" value={t('nav.games') || 'Game'} />
+                        <InputLabel htmlFor="game_id" value={t('nav.games')} />
                         <select
                             id="game_id"
                             className="mt-1 block w-full rounded-lg border-white/10 bg-navy-950 px-3 py-2 text-sm text-slate-100"
                             value={data.game_id}
                             onChange={(e) => setData('game_id', e.target.value)}
                         >
-                            <option value="">{t('common.all') || 'All'}</option>
+                            <option value="">{t('common.all')}</option>
                             {(games ?? []).map((game) => (
                                 <option key={game.id} value={game.id}>
                                     {game.name}
@@ -95,28 +95,28 @@ export default function OrdersIndex({ orders, filters, games }) {
                         </select>
                     </div>
                     <div>
-                        <InputLabel htmlFor="flagged" value="Fraud" />
+                        <InputLabel htmlFor="flagged" value={t('admin.fraud')} />
                         <select
                             id="flagged"
                             className="mt-1 block w-full rounded-lg border-white/10 bg-navy-950 px-3 py-2 text-sm text-slate-100"
                             value={data.flagged}
                             onChange={(e) => setData('flagged', e.target.value)}
                         >
-                            <option value="">All</option>
-                            <option value="1">Flagged only</option>
-                            <option value="0">Not flagged</option>
+                            <option value="">{t('admin.fraud_all')}</option>
+                            <option value="1">{t('admin.fraud_flagged')}</option>
+                            <option value="0">{t('admin.fraud_clear')}</option>
                         </select>
                     </div>
                     <div className="flex flex-wrap gap-2 sm:col-span-2 lg:col-span-5">
                         <PrimaryButton type="submit" disabled={processing}>
-                            {t('common.apply') || 'Apply'}
+                            {t('common.apply')}
                         </PrimaryButton>
                         <button
                             type="button"
                             onClick={resetFilters}
                             className="rounded-lg border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-slate-200 hover:bg-white/5"
                         >
-                            {t('common.reset') || 'Reset'}
+                            {t('common.reset')}
                         </button>
                     </div>
                 </form>
@@ -127,14 +127,14 @@ export default function OrdersIndex({ orders, filters, games }) {
                     <table className="min-w-[900px] w-full divide-y divide-white/10 text-left text-sm">
                         <thead className="bg-navy-950/50 text-slate-400">
                             <tr>
-                                <th className="px-4 py-3 font-medium">{t('admin.order_number') || 'Order #'}</th>
-                                <th className="px-4 py-3 font-medium">{t('nav.games') || 'Game'}</th>
-                                <th className="px-4 py-3 font-medium">{t('home.packages') || 'Package'}</th>
-                                <th className="px-4 py-3 font-medium">{t('game.player_uid') || 'Player UID'}</th>
-                                <th className="px-4 py-3 font-medium">{t('game.total') || 'Amount'}</th>
-                                <th className="px-4 py-3 font-medium">{t('game.payment_method') || 'Payment'}</th>
-                                <th className="px-4 py-3 font-medium">{t('common.status') || 'Status'}</th>
-                                <th className="px-4 py-3 font-medium text-end">{t('common.actions') || 'Actions'}</th>
+                                <th className="px-4 py-3 font-medium">{t('admin.order_number')}</th>
+                                <th className="px-4 py-3 font-medium">{t('nav.games')}</th>
+                                <th className="px-4 py-3 font-medium">{t('home.packages')}</th>
+                                <th className="px-4 py-3 font-medium">{t('game.player_uid')}</th>
+                                <th className="px-4 py-3 font-medium">{t('game.total')}</th>
+                                <th className="px-4 py-3 font-medium">{t('game.payment_method')}</th>
+                                <th className="px-4 py-3 font-medium">{t('common.status')}</th>
+                                <th className="px-4 py-3 font-medium text-end">{t('common.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5 text-slate-200">

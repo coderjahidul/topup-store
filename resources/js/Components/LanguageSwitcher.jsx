@@ -26,26 +26,28 @@ export default function LanguageSwitcher({ className = '' }) {
             <button
                 type="button"
                 onClick={() => switchLocale('bn')}
-                className={`rounded-md px-2.5 py-1 font-medium transition ${
+                className={`rounded-md px-2.5 py-1 text-xs font-bold tracking-wide transition ${
                     locale === 'bn'
                         ? 'bg-cyan-500/20 text-cyan-300 shadow-glow-cyan'
                         : 'text-slate-400 hover:text-slate-200'
                 }`}
                 aria-pressed={locale === 'bn'}
+                aria-label={t('lang.bn')}
             >
-                {t('lang.bn')}
+                BN
             </button>
             <button
                 type="button"
                 onClick={() => switchLocale('en')}
-                className={`rounded-md px-2.5 py-1 font-medium transition ${
+                className={`rounded-md px-2.5 py-1 text-xs font-bold tracking-wide transition ${
                     locale === 'en'
                         ? 'bg-cyan-500/20 text-cyan-300 shadow-glow-cyan'
                         : 'text-slate-400 hover:text-slate-200'
                 }`}
                 aria-pressed={locale === 'en'}
+                aria-label={t('lang.en')}
             >
-                {t('lang.en')}
+                EN
             </button>
         </div>
     );

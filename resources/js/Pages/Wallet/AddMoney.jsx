@@ -1,10 +1,11 @@
+import AccountPageHeader from '@/Components/AccountPageHeader';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PaymentMethodSelector from '@/Components/PaymentMethodSelector';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import AppLayout from '@/Layouts/AppLayout';
-import { useForm } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { useMemo } from 'react';
 import useTrans from '@/hooks/useTrans';
 
@@ -37,17 +38,37 @@ export default function AddMoney({ paymentMethods = [], balance }) {
     };
 
     return (
-        <AppLayout title={t('nav.wallet')}>
-            <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:px-8">
-                <h1 className="text-3xl font-bold text-white">Add Money</h1>
-                <p className="mt-2 text-sm text-slate-400">
-                    {t('game.wallet_balance')}: {t('common.bdt')}
-                    {Number(balance).toLocaleString('en-BD')}
-                </p>
+        <AuthenticatedLayout
+            header={
+                <AccountPageHeader
+                    eyebrow={t('nav.transactions') || 'Wallet'}
+                    title={t('nav.add_money') || 'Add Money'}
+                    description={
+                        t('account.add_money_hint') ||
+                        'Send money to our merchant number, then submit amount and TrxID for approval.'
+                    }
+                    breadcrumbs={[
+                        { label: t('nav.dashboard'), href: route('dashboard') },
+                        { label: t('nav.transactions') || 'Wallet', href: route('customer.transactions') },
+                        { label: t('nav.add_money') || 'Add Money' },
+                    ]}
+                />
+            }
+        >
+            <Head title={t('nav.add_money') || 'Add Money'} />
+
+            <div className="mx-auto max-w-2xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+                <div className="rounded-2xl border border-cyan-400/20 bg-navy-900/60 p-5">
+                    <p className="text-xs uppercase tracking-wide text-slate-500">{t('game.wallet_balance')}</p>
+                    <p className="mt-1 text-3xl font-bold text-cyan-300">
+                        {t('common.bdt')}
+                        {Number(balance || 0).toLocaleString('en-BD')}
+                    </p>
+                </div>
 
                 <form
                     onSubmit={submit}
-                    className="mt-8 space-y-6 rounded-2xl border border-white/10 bg-navy-900/60 p-5"
+                    className="space-y-6 rounded-2xl border border-white/10 bg-navy-900/60 p-5 sm:p-6"
                 >
                     <div>
                         <InputLabel value={t('game.payment_method')} />
@@ -62,7 +83,7 @@ export default function AddMoney({ paymentMethods = [], balance }) {
                     </div>
 
                     <div>
-                        <InputLabel htmlFor="amount" value="Amount" />
+                        <InputLabel htmlFor="amount" value={t('account.amount') || 'Amount'} />
                         <TextInput
                             id="amount"
                             type="number"
@@ -101,9 +122,14 @@ export default function AddMoney({ paymentMethods = [], balance }) {
                         <InputError message={errors.trx_id} className="mt-2" />
                     </div>
 
-                    <PrimaryButton disabled={processing}>{t('common.continue')}</PrimaryButton>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <PrimaryButton disabled={processing}>{t('common.continue')}</PrimaryButton>
+                        <Link href={route('customer.transactions')} className="text-sm text-cyan-300">
+                            {t('account.view_ledger') || 'View ledger'}
+                        </Link>
+                    </div>
                 </form>
             </div>
-        </AppLayout>
+        </AuthenticatedLayout>
     );
 }
