@@ -22,6 +22,8 @@ const navItems = [
     },
     { key: 'users', routeName: 'admin.users.index', activeAs: 'admin.users.*', labelKey: 'nav.users', fallback: 'Users' },
     { key: 'reviews', routeName: 'admin.reviews.index', activeAs: 'admin.reviews.*', labelKey: 'nav.reviews', fallback: 'Reviews' },
+    { key: 'suppliers', routeName: 'admin.suppliers.index', activeAs: 'admin.suppliers.*', labelKey: 'nav.suppliers', fallback: 'Suppliers' },
+    { key: 'supplier-logs', routeName: 'admin.supplier-logs.index', activeAs: 'admin.supplier-logs.*', labelKey: 'nav.supplier_logs', fallback: 'Supplier logs' },
     { key: 'settings', routeName: 'admin.settings.edit', activeAs: 'admin.settings.*', labelKey: 'nav.settings', fallback: 'Settings' },
     { key: 'activity', routeName: 'admin.activity.index', activeAs: 'admin.activity.*', labelKey: 'nav.activity_log', fallback: 'Activity log' },
 ];

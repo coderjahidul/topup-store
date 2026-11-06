@@ -23,6 +23,7 @@ class SettingSeeder extends Seeder
             'min_order_amount' => '10',
             'cashback_percent' => '0',
             'referral_bonus' => '0',
+            'low_stock_threshold' => '5',
             'sms_enabled' => '0',
             'email_enabled' => '1',
             'flash_sale_ends_at' => now()->endOfDay()->toIso8601String(),

@@ -8,9 +8,11 @@ use App\Enums\PaymentStatus;
 use App\Enums\TransactionSource;
 use App\Enums\UserStatus;
 use App\Exceptions\InsufficientBalanceException;
+use App\Jobs\CheckLowStockJob;
 use App\Models\Game;
 use App\Models\Order;
 use App\Models\Package;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -23,6 +25,7 @@ class OrderService
         private CouponService $couponService,
         private PaymentVerificationService $paymentVerification,
         private NotificationService $notificationService,
+        private SupplierService $supplierService,
     ) {}
 
     /**
@@ -167,6 +170,8 @@ class OrderService
                     'payment_status' => PaymentStatus::Paid,
                     'status' => OrderStatus::Processing,
                 ])->save();
+
+                $this->supplierService->assignDefaultSupplier($order);
             }
 
             if ($user) {
@@ -176,6 +181,17 @@ class OrderService
             }
 
             $this->notificationService->orderPlaced($order);
+
+            if ($package->stock !== null) {
+                $threshold = (int) Setting::getValue('low_stock_threshold', 5);
+                if ($package->fresh()->stock <= $threshold) {
+                    DB::afterCommit(fn () => CheckLowStockJob::dispatch());
+                }
+            }
+
+            if ($order->fresh()->status === OrderStatus::Processing) {
+                DB::afterCommit(fn () => $this->supplierService->dispatchFulfillment($order->fresh()));
+            }
 
             return $order->fresh(['game', 'package']);
         });
@@ -230,9 +246,9 @@ class OrderService
         });
     }
 
-    public function markProcessing(Order $order): Order
+    public function markProcessing(Order $order, bool $dispatchSupplier = false): Order
     {
-        return DB::transaction(function () use ($order) {
+        $updated = DB::transaction(function () use ($order) {
             /** @var Order $locked */
             $locked = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
 
@@ -241,9 +257,16 @@ class OrderService
             }
 
             $locked->forceFill(['status' => OrderStatus::Processing])->save();
+            $this->supplierService->assignDefaultSupplier($locked);
 
             return $locked->fresh();
         });
+
+        if ($dispatchSupplier && $updated->status === OrderStatus::Processing && ! $updated->supplier_order_ref) {
+            $this->supplierService->dispatchFulfillment($updated);
+        }
+
+        return $updated;
     }
 
     public function complete(Order $order): Order

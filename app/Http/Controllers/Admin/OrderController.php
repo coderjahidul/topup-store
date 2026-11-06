@@ -110,7 +110,7 @@ class OrderController extends Controller
 
     public function processing(Order $order): RedirectResponse
     {
-        $this->orderService->markProcessing($order);
+        $this->orderService->markProcessing($order, dispatchSupplier: true);
         activity()->causedBy(auth()->user())->performedOn($order)->log('order marked processing');
 
         return back()->with('success', 'Order marked processing.');

@@ -22,5 +22,22 @@ class SupplierSeeder extends Seeder
                 'is_active' => true,
             ],
         );
+
+        Supplier::query()->updateOrCreate(
+            ['code' => 'sample_api'],
+            [
+                'name' => 'Sample API Supplier',
+                'driver' => 'App\\Suppliers\\SampleApiSupplier',
+                'credentials' => [
+                    'api_key' => 'demo-key',
+                    'api_secret' => 'demo-secret',
+                    'demo_balance' => 50000,
+                    'force_fail' => false,
+                    'fail_rate' => 0,
+                ],
+                'balance_cache' => 50000,
+                'is_active' => false,
+            ],
+        );
     }
 }

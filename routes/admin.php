@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\SupplierLogController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -99,6 +101,15 @@ Route::middleware(['auth', 'permission:admin.access'])
         Route::put('/settings', [SettingController::class, 'update'])
             ->middleware('permission:settings.manage')
             ->name('settings.update');
+
+        Route::middleware('permission:settings.manage')->group(function () {
+            Route::resource('suppliers', SupplierController::class)->except(['show']);
+            Route::post('/suppliers/{supplier}/sync-balance', [SupplierController::class, 'syncBalance'])
+                ->name('suppliers.sync-balance');
+            Route::post('/suppliers/{supplier}/toggle', [SupplierController::class, 'toggle'])
+                ->name('suppliers.toggle');
+            Route::get('/supplier-logs', SupplierLogController::class)->name('supplier-logs.index');
+        });
 
         Route::get('/activity', ActivityLogController::class)
             ->middleware('permission:activity.view')

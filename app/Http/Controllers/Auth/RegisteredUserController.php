@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -65,6 +66,8 @@ class RegisteredUserController extends Controller
         $user->assignRole(Role::findOrCreate('customer', 'web'));
 
         event(new Registered($user));
+
+        app(NotificationService::class)->welcome($user->fresh());
 
         Auth::login($user);
 
