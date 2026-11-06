@@ -24,6 +24,7 @@ class OrderFactory extends Factory
 
         return [
             'order_number' => 'ORD-'.now()->format('Ymd').'-'.fake()->unique()->numerify('####'),
+            'idempotency_token' => fake()->unique()->uuid(),
             'user_id' => User::factory(),
             'guest_name' => null,
             'guest_phone' => null,

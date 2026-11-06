@@ -68,11 +68,14 @@ export default function Show({
     const submit = (event) => {
         event.preventDefault();
 
-        post(route('games.checkout-preview', game.slug), {
+        post(route('orders.store', game.slug), {
             preserveScroll: true,
+            onError: () => {
+                setData('idempotency_token', makeToken());
+            },
             onSuccess: () => {
                 setData('idempotency_token', makeToken());
-                reset('trx_id');
+                reset('trx_id', 'sender_number', 'coupon_code');
             },
         });
     };

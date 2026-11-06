@@ -43,10 +43,10 @@ export default function Home({
                                 {t('home.cta_shop')}
                             </a>
                             <Link
-                                href={route('pages.show', 'contact')}
+                                href={route('orders.track')}
                                 className="inline-flex rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-100"
                             >
-                                {t('nav.support')}
+                                {t('home.cta_track')}
                             </Link>
                         </div>
                     </div>

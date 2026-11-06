@@ -7,7 +7,7 @@ use App\Models\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class PrepareOrderRequest extends FormRequest
+class StoreOrderRequest extends FormRequest
 {
     public function authorize(): bool
     {

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable([
     'order_number',
+    'idempotency_token',
     'user_id',
     'guest_name',
     'guest_phone',

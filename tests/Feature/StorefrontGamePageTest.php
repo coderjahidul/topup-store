@@ -26,6 +26,7 @@ class StorefrontGamePageTest extends TestCase
                 ->where('game.slug', 'free-fire')
                 ->has('game.packages', 2)
                 ->has('paymentMethods')
+                ->where('checkoutEnabled', true)
             );
     }
 
@@ -34,45 +35,5 @@ class StorefrontGamePageTest extends TestCase
         $game = Game::factory()->inactive()->create(['slug' => 'hidden-game']);
 
         $this->get(route('games.show', $game))->assertNotFound();
-    }
-
-    public function test_checkout_preview_validates_guest_payload(): void
-    {
-        $game = Game::factory()->create(['is_active' => true, 'requires_server' => false]);
-        $package = Package::factory()->for($game)->create(['is_active' => true]);
-        PaymentMethod::factory()->create(['code' => 'bkash', 'is_active' => true]);
-
-        $this->from(route('games.show', $game))
-            ->post(route('games.checkout-preview', $game), [
-                'package_id' => $package->id,
-                'player_uid' => '123456789',
-                'payment_method' => 'bkash',
-                'guest_name' => 'Karim',
-                'guest_phone' => '01712345678',
-                'sender_number' => '01812345678',
-                'trx_id' => 'abc12345',
-                'idempotency_token' => 'token-1',
-            ])
-            ->assertRedirect(route('games.show', $game))
-            ->assertSessionHas('success');
-    }
-
-    public function test_checkout_preview_requires_bd_phone_for_guests(): void
-    {
-        $game = Game::factory()->create(['is_active' => true]);
-        $package = Package::factory()->for($game)->create(['is_active' => true]);
-
-        $this->from(route('games.show', $game))
-            ->post(route('games.checkout-preview', $game), [
-                'package_id' => $package->id,
-                'player_uid' => '123456789',
-                'payment_method' => 'bkash',
-                'guest_name' => 'Karim',
-                'guest_phone' => '12345',
-                'sender_number' => '01812345678',
-                'trx_id' => 'ABC12345',
-                'idempotency_token' => 'token-2',
-            ])
-            ->assertSessionHasErrors('guest_phone');
     }
 }

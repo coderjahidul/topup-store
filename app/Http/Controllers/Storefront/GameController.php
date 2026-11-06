@@ -85,7 +85,7 @@ class GameController extends Controller
                 'balance' => $request->user()->balance,
             ] : null,
             'supportWhatsapp' => Setting::getValue('support_whatsapp'),
-            'checkoutEnabled' => false,
+            'checkoutEnabled' => true,
         ]);
     }
 }
