@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -79,14 +80,22 @@ class RolesAndPermissionsSeeder extends Seeder
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Super Admin',
+                'phone' => '01700000000',
                 'password' => Hash::make('password'),
                 'locale' => 'bn',
+                'balance' => 0,
+                'status' => UserStatus::Active,
+                'referral_code' => 'ADMIN001',
                 'email_verified_at' => now(),
             ],
         );
 
         if (! $admin->hasRole('super_admin')) {
             $admin->assignRole('super_admin');
+        }
+
+        if (! $admin->hasRole('customer')) {
+            $admin->assignRole('customer');
         }
     }
 }

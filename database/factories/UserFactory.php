@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -27,9 +28,15 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'phone' => '01'.fake()->randomElement(['3', '4', '5', '6', '7', '8', '9']).fake()->unique()->numerify('########'),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'locale' => 'bn',
+            'balance' => 0,
+            'status' => UserStatus::Active,
+            'referral_code' => strtoupper(Str::random(8)),
+            'referred_by' => null,
+            'last_player_uid' => null,
             'remember_token' => Str::random(10),
         ];
     }
@@ -41,6 +48,20 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function blocked(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => UserStatus::Blocked,
+        ]);
+    }
+
+    public function withBalance(float $amount): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'balance' => $amount,
         ]);
     }
 }

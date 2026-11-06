@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('locale', 5)->default('bn')->after('password');
+        Schema::create('notices', function (Blueprint $table) {
+            $table->id();
+            $table->json('message');
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('locale');
-        });
+        Schema::dropIfExists('notices');
     }
 };
