@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 #[Fillable([
     'key',
@@ -19,9 +21,17 @@ class Setting extends Model
 
     public static function getValue(string $key, mixed $default = null): mixed
     {
-        $settings = Cache::rememberForever('settings.all', function () {
-            return static::query()->pluck('value', 'key')->all();
-        });
+        try {
+            if (! Schema::hasTable('settings')) {
+                return $default;
+            }
+
+            $settings = Cache::rememberForever('settings.all', function () {
+                return static::query()->pluck('value', 'key')->all();
+            });
+        } catch (Throwable) {
+            return $default;
+        }
 
         return $settings[$key] ?? $default;
     }

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             BannerNoticeSeeder::class,
             SettingSeeder::class,
             SupplierSeeder::class,
+            DemoFeedSeeder::class,
         ]);
     }
 }

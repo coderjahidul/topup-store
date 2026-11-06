@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Inertia\Middleware;
@@ -39,7 +40,9 @@ class HandleInertiaRequests extends Middleware
                     'id' => $request->user()->id,
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
+                    'phone' => $request->user()->phone,
                     'locale' => $request->user()->locale,
+                    'balance' => $request->user()->balance,
                 ] : null,
             ],
             'locale' => $locale,
@@ -50,6 +53,8 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
             ],
             'appName' => config('app.name'),
+            'supportWhatsapp' => Setting::getValue('support_whatsapp'),
+            'facebookLink' => Setting::getValue('facebook_link'),
         ];
     }
 

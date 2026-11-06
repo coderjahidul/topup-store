@@ -6,11 +6,11 @@ export default function Footer() {
     const year = new Date().getFullYear();
 
     const links = [
-        { href: '#about', label: t('footer.about') },
-        { href: '#terms', label: t('footer.terms') },
-        { href: '#privacy', label: t('footer.privacy') },
-        { href: '#refund', label: t('footer.refund') },
-        { href: '#contact', label: t('footer.contact') },
+        { href: route('pages.show', 'about'), label: t('footer.about') },
+        { href: route('pages.show', 'terms'), label: t('footer.terms') },
+        { href: route('pages.show', 'privacy'), label: t('footer.privacy') },
+        { href: route('pages.show', 'refund'), label: t('footer.refund') },
+        { href: route('pages.show', 'contact'), label: t('footer.contact') },
     ];
 
     return (

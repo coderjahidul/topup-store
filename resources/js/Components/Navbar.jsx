@@ -11,8 +11,8 @@ export default function Navbar() {
 
     const links = [
         { href: route('home'), label: t('nav.home'), active: route().current('home') },
-        { href: '#games', label: t('nav.games'), active: false },
-        { href: '#track', label: t('nav.track_order'), active: false },
+        { href: `${route('home')}#games`, label: t('nav.games'), active: false },
+        { href: route('pages.show', 'contact'), label: t('footer.contact'), active: route().current('pages.show', 'contact') },
     ];
 
     return (
