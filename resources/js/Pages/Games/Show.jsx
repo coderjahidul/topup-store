@@ -29,11 +29,15 @@ export default function Show({
     game,
     paymentMethods = [],
     lastPlayerUid = null,
+    prefillPackageId = null,
+    prefillServer = null,
     authUser = null,
 }) {
     const { t } = useTrans();
     const { errors } = usePage().props;
-    const [selectedId, setSelectedId] = useState(game.packages?.[0]?.id ?? null);
+    const [selectedId, setSelectedId] = useState(
+        prefillPackageId || game.packages?.[0]?.id || null,
+    );
 
     const selectedPackage = useMemo(
         () => game.packages.find((item) => item.id === selectedId) ?? null,
@@ -47,7 +51,9 @@ export default function Show({
     const { data, setData, post, processing, reset } = useForm({
         package_id: selectedPackage?.id ?? '',
         player_uid: lastPlayerUid || '',
-        server: game.requires_server ? game.servers?.[0] ?? '' : '',
+        server: game.requires_server
+            ? (prefillServer || game.servers?.[0] || '')
+            : '',
         payment_method: paymentMethods[0]?.code ?? 'bkash',
         coupon_code: '',
         guest_name: authUser?.name ?? '',

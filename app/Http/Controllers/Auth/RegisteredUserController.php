@@ -22,9 +22,11 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', [
+            'referralCode' => $request->string('ref')->toString() ?: null,
+        ]);
     }
 
     /**
@@ -39,7 +41,15 @@ class RegisteredUserController extends Controller
             'phone' => ['required', 'string', 'regex:/^01[3-9]\d{8}$/', 'unique:'.User::class],
             'email' => 'nullable|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'referral_code' => ['nullable', 'string', 'max:32'],
         ]);
+
+        $referrer = null;
+        if ($request->filled('referral_code')) {
+            $referrer = User::query()
+                ->where('referral_code', strtoupper(trim((string) $request->input('referral_code'))))
+                ->first();
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -49,6 +59,7 @@ class RegisteredUserController extends Controller
             'locale' => app()->getLocale() ?: 'bn',
             'status' => UserStatus::Active,
             'referral_code' => $this->uniqueReferralCode(),
+            'referred_by' => $referrer?->id,
         ]);
 
         $user->assignRole(Role::findOrCreate('customer', 'web'));

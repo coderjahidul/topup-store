@@ -57,6 +57,10 @@ class GameController extends Controller
             ]);
         }
 
+        $prefillPackage = $request->integer('package') ?: null;
+        $prefillUid = $request->string('uid')->toString() ?: $request->user()?->last_player_uid;
+        $prefillServer = $request->string('server')->toString() ?: null;
+
         return Inertia::render('Games/Show', [
             'game' => [
                 'id' => $game->id,
@@ -77,7 +81,9 @@ class GameController extends Controller
                 ]),
             ],
             'paymentMethods' => $methods,
-            'lastPlayerUid' => $request->user()?->last_player_uid,
+            'lastPlayerUid' => $prefillUid,
+            'prefillPackageId' => $prefillPackage,
+            'prefillServer' => $prefillServer,
             'authUser' => $request->user() ? [
                 'name' => $request->user()->name,
                 'phone' => $request->user()->phone,

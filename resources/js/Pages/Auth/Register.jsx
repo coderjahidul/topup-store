@@ -6,7 +6,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import useTrans from '@/hooks/useTrans';
 
-export default function Register() {
+export default function Register({ referralCode = '' }) {
     const { t } = useTrans();
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
@@ -14,6 +14,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
+        referral_code: referralCode || '',
     });
 
     const submit = (e) => {
@@ -78,6 +79,17 @@ export default function Register() {
                     />
 
                     <InputError message={errors.email} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="referral_code" value="Referral code (optional)" />
+                    <TextInput
+                        id="referral_code"
+                        className="mt-1 block w-full uppercase"
+                        value={data.referral_code}
+                        onChange={(e) => setData('referral_code', e.target.value.toUpperCase())}
+                    />
+                    <InputError message={errors.referral_code} className="mt-2" />
                 </div>
 
                 <div className="mt-4">

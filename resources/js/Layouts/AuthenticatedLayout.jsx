@@ -3,6 +3,7 @@ import Dropdown from '@/Components/Dropdown';
 import LanguageSwitcher from '@/Components/LanguageSwitcher';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import Toast from '@/Components/Toast';
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import useTrans from '@/hooks/useTrans';
@@ -12,8 +13,16 @@ export default function AuthenticatedLayout({ header, children }) {
     const { t } = useTrans();
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
+    const links = [
+        { href: route('dashboard'), label: t('nav.dashboard'), active: route().current('dashboard') },
+        { href: route('customer.orders.index'), label: t('nav.orders'), active: route().current('customer.orders.*') },
+        { href: route('customer.transactions'), label: t('nav.transactions') || 'Wallet', active: route().current('customer.transactions') || route().current('wallet.*') },
+        { href: route('customer.referrals'), label: t('nav.referral') || 'Referral', active: route().current('customer.referrals') },
+    ];
+
     return (
         <div className="min-h-screen bg-navy-950 text-slate-100">
+            <Toast />
             <nav className="border-b border-white/10 bg-navy-900/80 backdrop-blur">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
@@ -25,16 +34,19 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    {t('nav.dashboard')}
-                                </NavLink>
+                                {links.map((link) => (
+                                    <NavLink key={link.href} href={link.href} active={link.active}>
+                                        {link.label}
+                                    </NavLink>
+                                ))}
                             </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center sm:gap-3">
+                            <span className="text-sm text-cyan-300">
+                                {t('common.bdt')}
+                                {Number(user?.balance ?? 0).toLocaleString('en-BD')}
+                            </span>
                             <LanguageSwitcher />
                             <div className="relative">
                                 <Dropdown>
@@ -64,6 +76,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('profile.edit')}>
                                             {t('nav.profile')}
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('wallet.add-money')}>
+                                            {t('nav.add_money') || 'Add Money'}
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route('logout')}
@@ -107,12 +122,11 @@ export default function AuthenticatedLayout({ header, children }) {
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                        >
-                            {t('nav.dashboard')}
-                        </ResponsiveNavLink>
+                        {links.map((link) => (
+                            <ResponsiveNavLink key={link.href} href={link.href} active={link.active}>
+                                {link.label}
+                            </ResponsiveNavLink>
+                        ))}
                     </div>
 
                     <div className="border-t border-white/10 px-4 py-3">
@@ -122,7 +136,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="border-t border-white/10 pb-1 pt-4">
                         <div className="px-4">
                             <div className="text-base font-medium text-white">{user.name}</div>
-                            <div className="text-sm font-medium text-slate-400">{user.email}</div>
+                            <div className="text-sm font-medium text-slate-400">{user.phone || user.email}</div>
                         </div>
 
                         <div className="mt-3 space-y-1">

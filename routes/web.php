@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Customer\DashboardController;
+use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Customer\ReferralController;
+use App\Http\Controllers\Customer\ReviewController;
+use App\Http\Controllers\Customer\WalletTransactionController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Storefront\AddMoneyController;
@@ -9,7 +14,6 @@ use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\OrderTrackingController;
 use App\Http\Controllers\Storefront\PageController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -32,11 +36,19 @@ Route::get('/pages/{page}', [PageController::class, 'show'])
     ->whereIn('page', PageController::PAGES)
     ->name('pages.show');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    Route::get('/my/orders', [CustomerOrderController::class, 'index'])->name('customer.orders.index');
+    Route::get('/my/orders/{order}', [CustomerOrderController::class, 'show'])->name('customer.orders.show');
+    Route::post('/my/orders/{order}/reorder', [CustomerOrderController::class, 'reorder'])->name('customer.orders.reorder');
+    Route::post('/my/orders/{order}/reviews', [ReviewController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('customer.reviews.store');
+
+    Route::get('/my/transactions', WalletTransactionController::class)->name('customer.transactions');
+    Route::get('/my/referrals', ReferralController::class)->name('customer.referrals');
+
     Route::get('/wallet/add-money', [AddMoneyController::class, 'create'])->name('wallet.add-money');
     Route::post('/wallet/add-money', [AddMoneyController::class, 'store'])
         ->middleware('throttle:5,1')

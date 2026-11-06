@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
                     'phone' => $request->user()->phone,
                     'locale' => $request->user()->locale,
                     'balance' => $request->user()->balance,
+                    'referral_code' => $request->user()->referral_code,
                 ] : null,
             ],
             'locale' => $locale,
