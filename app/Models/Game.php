@@ -51,11 +51,6 @@ class Game extends Model
         ];
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
     public function packages(): HasMany
     {
         return $this->hasMany(Package::class);

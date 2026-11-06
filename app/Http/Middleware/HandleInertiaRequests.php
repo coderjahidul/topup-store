@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                     'locale' => $request->user()->locale,
                     'balance' => $request->user()->balance,
                     'referral_code' => $request->user()->referral_code,
+                    'can_access_admin' => $request->user()->can('admin.access'),
                 ] : null,
             ],
             'locale' => $locale,

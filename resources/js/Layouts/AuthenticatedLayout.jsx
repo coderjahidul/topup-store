@@ -74,6 +74,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
+                                        {user?.can_access_admin && (
+                                            <Dropdown.Link href={route('admin.dashboard')}>
+                                                {t('nav.admin') || 'Admin'}
+                                            </Dropdown.Link>
+                                        )}
                                         <Dropdown.Link href={route('profile.edit')}>
                                             {t('nav.profile')}
                                         </Dropdown.Link>

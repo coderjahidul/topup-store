@@ -268,6 +268,58 @@ class OrderService
         });
     }
 
+    public function cancel(Order $order, ?string $adminNote = null): Order
+    {
+        return DB::transaction(function () use ($order, $adminNote) {
+            /** @var Order $locked */
+            $locked = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
+
+            if (in_array($locked->status, [
+                OrderStatus::Completed,
+                OrderStatus::Cancelled,
+                OrderStatus::Refunded,
+            ], true)) {
+                return $locked;
+            }
+
+            if (
+                $locked->payment_method === PaymentMethodCode::Wallet
+                && $locked->payment_status === PaymentStatus::Paid
+                && $locked->user_id
+            ) {
+                $user = User::query()->whereKey($locked->user_id)->lockForUpdate()->firstOrFail();
+                $this->walletService->credit(
+                    $user,
+                    $locked->final_amount,
+                    TransactionSource::Refund,
+                    $locked,
+                    null,
+                    'Cancel refund for '.$locked->order_number,
+                );
+
+                $locked->forceFill([
+                    'payment_status' => PaymentStatus::Refunded,
+                    'status' => OrderStatus::Cancelled,
+                    'admin_note' => $adminNote,
+                ])->save();
+            } else {
+                $locked->forceFill([
+                    'status' => OrderStatus::Cancelled,
+                    'admin_note' => $adminNote,
+                ])->save();
+            }
+
+            return $locked->fresh();
+        });
+    }
+
+    public function updateAdminNote(Order $order, string $note): Order
+    {
+        $order->forceFill(['admin_note' => $note])->save();
+
+        return $order->fresh();
+    }
+
     /**
      * Find a public order by number + phone for tracking.
      */
