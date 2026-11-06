@@ -65,8 +65,19 @@ export default function OrdersShow({ order }) {
                         <div className="flex flex-wrap items-center gap-3">
                             <h2 className="text-xl font-semibold text-white">{order.order_number}</h2>
                             <StatusBadge status={order.status} />
+                            {order.is_flagged && (
+                                <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-medium text-amber-300 ring-1 ring-amber-400/30">
+                                    Flagged
+                                </span>
+                            )}
                         </div>
                         <p className="mt-1 text-sm text-slate-400">{t('admin.order_detail_hint') || 'Process or update this order.'}</p>
+                        {order.is_flagged && (order.fraud_flags?.length ?? 0) > 0 && (
+                            <p className="mt-2 text-xs text-amber-200/90">
+                                Flags: {(order.fraud_flags || []).join(', ')}
+                                {order.duplicate_uid_count > 0 ? ` · duplicate UID (24h): ${order.duplicate_uid_count}` : ''}
+                            </p>
+                        )}
                     </div>
                     <Link
                         href={route('admin.orders.index')}

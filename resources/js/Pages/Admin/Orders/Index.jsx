@@ -16,6 +16,7 @@ export default function OrdersIndex({ orders, filters, games }) {
         payment_method: filters?.payment_method ?? '',
         search: filters?.search ?? '',
         game_id: filters?.game_id ?? '',
+        flagged: filters?.flagged ?? '',
     });
 
     const submitFilters = (event) => {
@@ -91,6 +92,19 @@ export default function OrdersIndex({ orders, filters, games }) {
                                     {game.name}
                                 </option>
                             ))}
+                        </select>
+                    </div>
+                    <div>
+                        <InputLabel htmlFor="flagged" value="Fraud" />
+                        <select
+                            id="flagged"
+                            className="mt-1 block w-full rounded-lg border-white/10 bg-navy-950 px-3 py-2 text-sm text-slate-100"
+                            value={data.flagged}
+                            onChange={(e) => setData('flagged', e.target.value)}
+                        >
+                            <option value="">All</option>
+                            <option value="1">Flagged only</option>
+                            <option value="0">Not flagged</option>
                         </select>
                     </div>
                     <div className="flex flex-wrap gap-2 sm:col-span-2 lg:col-span-5">

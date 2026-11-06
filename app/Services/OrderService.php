@@ -26,6 +26,7 @@ class OrderService
         private PaymentVerificationService $paymentVerification,
         private NotificationService $notificationService,
         private SupplierService $supplierService,
+        private FraudCheckService $fraudCheckService,
     ) {}
 
     /**
@@ -180,6 +181,7 @@ class OrderService
                 ])->save();
             }
 
+            $this->fraudCheckService->evaluateAndFlag($order);
             $this->notificationService->orderPlaced($order);
 
             if ($package->stock !== null) {

@@ -57,6 +57,15 @@ class HandleInertiaRequests extends Middleware
             'appName' => config('app.name'),
             'supportWhatsapp' => Setting::getValue('support_whatsapp'),
             'facebookLink' => Setting::getValue('facebook_link'),
+            'seo' => [
+                'base_url' => rtrim((string) config('app.url'), '/'),
+                'default_title' => Setting::getValue('site_name', config('app.name')),
+                'default_description' => Setting::getValue(
+                    'seo_description',
+                    'Buy Free Fire Diamond, PUBG UC, Mobile Legends Diamond — fast top-up in Bangladesh.',
+                ),
+                'og_image' => Setting::getValue('og_image', '/icons/icon-512.png'),
+            ],
         ];
     }
 

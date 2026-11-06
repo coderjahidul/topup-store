@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\NoticeController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PaymentMethodController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SupplierController;
@@ -94,6 +95,19 @@ Route::middleware(['auth', 'permission:admin.access'])
         Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
             ->middleware('permission:catalog.manage')
             ->name('reviews.destroy');
+
+        Route::middleware('permission:reports.view')->group(function () {
+            Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/reports/sales.xlsx', [ReportController::class, 'exportSalesExcel'])
+                ->middleware('permission:reports.export')
+                ->name('reports.sales.excel');
+            Route::get('/reports/wallet.xlsx', [ReportController::class, 'exportWalletExcel'])
+                ->middleware('permission:reports.export')
+                ->name('reports.wallet.excel');
+            Route::get('/reports/sales.pdf', [ReportController::class, 'exportSalesPdf'])
+                ->middleware('permission:reports.export')
+                ->name('reports.sales.pdf');
+        });
 
         Route::get('/settings', [SettingController::class, 'edit'])
             ->middleware('permission:settings.manage')

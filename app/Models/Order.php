@@ -40,6 +40,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'supplier_id',
     'supplier_order_ref',
     'admin_note',
+    'fraud_flags',
+    'is_flagged',
     'ip_address',
     'user_agent',
     'completed_at',
@@ -72,6 +74,8 @@ class Order extends Model
             'payment_method' => PaymentMethodCode::class,
             'payment_status' => PaymentStatus::class,
             'status' => OrderStatus::class,
+            'fraud_flags' => 'array',
+            'is_flagged' => 'boolean',
             'completed_at' => 'datetime',
         ];
     }

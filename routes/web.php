@@ -6,7 +6,9 @@ use App\Http\Controllers\Customer\ReferralController;
 use App\Http\Controllers\Customer\ReviewController;
 use App\Http\Controllers\Customer\WalletTransactionController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\ManifestController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Storefront\AddMoneyController;
 use App\Http\Controllers\Storefront\GameController;
 use App\Http\Controllers\Storefront\HomeController;
@@ -16,6 +18,9 @@ use App\Http\Controllers\Storefront\PageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/manifest.webmanifest', ManifestController::class)->name('manifest');
 
 Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
 

@@ -24,6 +24,7 @@ class OrderController extends Controller
             'payment_method' => $request->string('payment_method')->toString(),
             'search' => $request->string('search')->toString(),
             'game_id' => $request->integer('game_id') ?: null,
+            'flagged' => $request->string('flagged')->toString(),
         ];
 
         $orders = Order::query()
@@ -31,6 +32,8 @@ class OrderController extends Controller
             ->when($filters['status'], fn ($q, $status) => $q->where('status', $status))
             ->when($filters['payment_method'], fn ($q, $method) => $q->where('payment_method', $method))
             ->when($filters['game_id'], fn ($q, $gameId) => $q->where('game_id', $gameId))
+            ->when($filters['flagged'] === '1', fn ($q) => $q->where('is_flagged', true))
+            ->when($filters['flagged'] === '0', fn ($q) => $q->where('is_flagged', false))
             ->when($filters['search'], function ($q, $search) {
                 $q->where(function ($inner) use ($search) {
                     $inner->where('order_number', 'like', "%{$search}%")
@@ -51,6 +54,8 @@ class OrderController extends Controller
                 'final_amount' => $order->final_amount,
                 'payment_method' => $order->payment_method->value,
                 'status' => $order->status->value,
+                'is_flagged' => (bool) $order->is_flagged,
+                'fraud_flags' => $order->fraud_flags ?? [],
                 'created_at' => $order->created_at?->toDateTimeString(),
             ]);
 
@@ -100,6 +105,8 @@ class OrderController extends Controller
                 'created_at' => $order->created_at?->toDateTimeString(),
                 'completed_at' => $order->completed_at?->toDateTimeString(),
                 'duplicate_uid_count' => $duplicateUidCount,
+                'is_flagged' => (bool) $order->is_flagged,
+                'fraud_flags' => $order->fraud_flags ?? [],
                 'can_process' => $order->status === OrderStatus::Pending,
                 'can_complete' => in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing], true),
                 'can_fail' => ! in_array($order->status, [OrderStatus::Completed, OrderStatus::Failed, OrderStatus::Refunded, OrderStatus::Cancelled], true),
